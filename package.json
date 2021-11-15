@@ -1,0 +1,17 @@
+{
+	"name": "aoc-2021",
+	"description": "AOC 2021",
+	"authors": "SigmaHyperon",
+	"version": "0.1.0",
+	"main": "dist/index.ts",
+	"devDependencies": {
+		"@types/node": "^16.11.7"
+	},
+	"scripts": {
+		"build": "tsc && npm run copy-input",
+		"copy-input": "rsync -avh --progress --include='*.txt' --include='*/' --exclude='*' days/ dist/days/"
+	},
+	"dependencies": {
+		"ts-node": "^10.4.0"
+	}
+}

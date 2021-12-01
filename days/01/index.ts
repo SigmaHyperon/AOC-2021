@@ -1,6 +1,6 @@
-import { Input } from "../lib/input";
-import Solver from "../lib/solver";
-import { Arrays } from "../lib/util";
+import { Input } from "../../lib/input";
+import Solver from "../../lib/solver";
+import { Arrays } from "../../lib/util";
 
 const values = Input.readFile().asLines().asIntegers().get();
 

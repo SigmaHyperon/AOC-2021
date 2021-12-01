@@ -11,5 +11,5 @@ const args = yargs(hideBin(process.argv))
 
 if(!(args instanceof Promise)) {
 	const day = args.day.toString().length > 1 ? args.day.toString() : `0${args.day}`;
-	const test = import(`./days/${day}`);
+	import(`./days/${day}`);
 }

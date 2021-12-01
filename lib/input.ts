@@ -11,7 +11,7 @@ abstract class AbstractInput<T> {
 
 	get(): T {
 		return this.content;
-	};
+	}
 }
 
 export class Input extends AbstractInput<string> {

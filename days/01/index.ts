@@ -2,7 +2,7 @@ import { Input } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 
-const values = Input.readFile().asLines().asIntegers().get();
+const values = Input.readFile().asLines().removeEmpty().asIntegers().get();
 
 function part1() {
     let count = 0;
@@ -10,7 +10,7 @@ function part1() {
         try {
             const pair = window(i, 2);
             if(pair[1] > pair[0]) {
-            count++;
+                count++;
             }
         } catch(e) {
             break;

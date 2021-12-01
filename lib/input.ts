@@ -52,4 +52,8 @@ export class SplitInput<T> extends AbstractInput<T[]> {
 	filter(filter: (input: T) => boolean) {
 		return new SplitInput(this.content.filter(filter));
 	}
+
+	removeEmpty(): SplitInput<T> {
+		return this.filter(v => v != null && typeof v !== "undefined" && (typeof v !== "string" || v !== ""))
+	}
 }

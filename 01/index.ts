@@ -1,5 +1,6 @@
 import { Input } from "../lib/input";
 import Solver from "../lib/solver";
+import { Arrays } from "../lib/util";
 
 const values = Input.readFile().asLines().asIntegers().get();
 
@@ -33,7 +34,7 @@ function window(index: number, width: number): number {
     if(index + width > values.length) 
         throw "window out of bounds";
     const windowValues = values.slice(index, index + width);
-    return windowValues.reduce((acc, v) => acc + v, 0);
+    return Arrays.sum(windowValues);
 }
 
 

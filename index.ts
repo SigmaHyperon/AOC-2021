@@ -45,7 +45,7 @@ function createCodeFile(day: number) {
 		.setPart1(part1)
 		.setPart2(part2)
 		.solve();
-	`.replace(/\t\t/g, "");
+	`.replace(/\t\t/g, "").replace(/\n/, "");
 
 	const directoryPath = path.join("days", formatDay(day));
 	const filePath = path.join(directoryPath, Constants.CODE_FILE_NAME);

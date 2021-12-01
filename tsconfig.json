@@ -14,5 +14,8 @@
 		"days",
 		"lib", 
 		"index.ts"	
-	]
+	],
+	"ts-node": {
+		"files": true
+	}
 }

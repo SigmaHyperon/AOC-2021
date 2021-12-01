@@ -1,8 +1,8 @@
 import { performance } from "perf_hooks";
 
-export class Solver {
-	part1: () => string;
-	part2: () => string;
+export default class Solver {
+	part1: () => string | number;
+	part2: () => string | number;
 
 	protected constructor() {
 
@@ -12,12 +12,12 @@ export class Solver {
 		return new Solver();
 	}
 
-	setPart1(func: () => string): Solver {
+	setPart1(func: () => string | number): Solver {
 		this.part1 = func;
 		return this;
 	}
 
-	setPart2(func: () => string): Solver {
+	setPart2(func: () => string | number): Solver {
 		this.part2 = func;
 		return this;
 	}
@@ -39,12 +39,12 @@ export class Solver {
 		}
 	}
 
-	protected execute(func: () => string): { solution: string, time: number } {
+	protected execute(func: () => string | number): { solution: string, time: number } {
 		const t0 = performance.now();
-		const solution = func.apply(this);
+		const solution = func();
 		const t1 = performance.now();
 		return {
-			solution: solution,
+			solution: typeof solution === "number" ? solution.toString() : solution,
 			time: t1 - t0
 		}
 	}

@@ -3,6 +3,8 @@ import { hideBin } from 'yargs/helpers'
 import path from "path";
 import Constants from "./lib/constants";
 import fs from "fs";
+import { env } from "process";
+import { exec } from "child_process";
 
 yargs(hideBin(process.argv))
 .option("day", {
@@ -58,5 +60,8 @@ function createCodeFile(day: number) {
 		fs.writeFileSync(filePath, content);
 	} else {
 		console.warn(`code file for day ${day} already exists; skipping`);
+	}
+	if(env.TERM_PROGRAM === "vscode") {
+		exec(`code ${filePath}`);
 	}
 }

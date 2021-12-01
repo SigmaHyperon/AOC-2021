@@ -17,7 +17,13 @@ abstract class AbstractInput<T> {
 export class Input extends AbstractInput<string> {
 
 	static readFile(): Input {
-		return new Input(fs.readFileSync(path.join(path.dirname(require.main.filename), Constants.INPUT_FILE_NAME)).toString());
+		let filename = "";
+		if(require.main.children.some(v => v.filename.includes("days"))) {
+			filename = path.join(path.dirname(require.main.children.find(v => v.filename.includes("days")).filename), Constants.INPUT_FILE_NAME);
+		} else {
+			filename = path.join(path.dirname(require.main.filename), Constants.INPUT_FILE_NAME);
+		}
+		return new Input(fs.readFileSync(filename).toString());
 	}
 
 	static create(string: string): Input {

@@ -54,5 +54,9 @@ function createCodeFile(day: number) {
 		fs.mkdirSync(directoryPath);
 	}
 
-	fs.writeFileSync(filePath, content);
+	if(!fs.existsSync(filePath)) {
+		fs.writeFileSync(filePath, content);
+	} else {
+		console.warn(`code file for day ${day} already exists; skipping`);
+	}
 }

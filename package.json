@@ -5,13 +5,16 @@
 	"version": "0.1.0",
 	"main": "dist/index.ts",
 	"devDependencies": {
-		"@types/node": "^16.11.7"
+		"@types/node": "^16.11.7",
+		"@types/yargs": "^17.0.7"
 	},
 	"scripts": {
 		"build": "tsc && npm run copy-input",
-		"copy-input": "rsync -avh --progress --include='*.txt' --include='*/' --exclude='*' days/ dist/days/"
+		"copy-input": "rsync -avh --progress --include='*.txt' --include='*/' --exclude='*' days/ dist/days/",
+		"start": "node dist/days/"
 	},
 	"dependencies": {
-		"ts-node": "^10.4.0"
+		"ts-node": "^10.4.0",
+		"yargs": "^17.3.0"
 	}
 }

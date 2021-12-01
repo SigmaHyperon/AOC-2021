@@ -12,6 +12,7 @@
 	],
 	"include": [
 		"days",
-		"lib"
+		"lib", 
+		"index.ts"	
 	]
 }

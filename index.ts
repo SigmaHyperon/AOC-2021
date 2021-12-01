@@ -31,7 +31,7 @@ function createCodeFile(day: number) {
 		import Solver from "../../lib/solver";
 		import "../../lib/prototypes";
 
-		const values = Input.readFile();
+		const values = Input.readFile().get();
 
 		function part1(): number | string {
 			return 0;

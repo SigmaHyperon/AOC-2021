@@ -19,7 +19,7 @@ export class Input extends AbstractInput<string> {
 	static readFile(): Input {
 		let filename = "";
 		if(require.main.children.some(v => v.filename.includes("days"))) {
-			filename = path.join(path.dirname(require.main.children.find(v => v.filename.includes("days")).filename), Constants.INPUT_FILE_NAME);
+			filename = path.join(path.dirname(require.main.children.find(v => v.filename.includes("days")).filename), Constants.INPUT_FILE_NAME).replace(Constants.DIST_PATH, "");
 		} else {
 			filename = path.join(path.dirname(require.main.filename), Constants.INPUT_FILE_NAME);
 		}

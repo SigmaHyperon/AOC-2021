@@ -22,7 +22,7 @@ yargs(hideBin(process.argv))
 .argv;
 
 function formatDay(day: number): string {
-	return day.toString().length > 1 ? day.toString() : `0${day}`
+	return day.toString().padStart(2, "0");
 }
 
 function createCodeFile(day: number) {

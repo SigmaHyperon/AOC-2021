@@ -30,14 +30,14 @@ function part2(): number | string {
 	return oxygenRating.toInt() * co2Rating.toInt();
 }
 
-function findValue(values: Binary[], criterium: (commonDigit: number, digit: number) => boolean, index: number = 0): Binary {
-	const commonDigits = mostCommonBit(values);
-	const filtered = values.filter(v => criterium(commonDigits[index], v.getDigit(index)));
-	if(filtered.length === 1) {
-		return filtered[0];
-	} else {
-		return findValue(filtered, criterium, index + 1);
+function findValue(values: Binary[], criterium: (commonDigit: number, digit: number) => boolean): Binary {
+	let index = 0;
+	while(values.length > 1) {
+		const commonDigits = mostCommonBit(values);
+		values = values.filter(v => criterium(commonDigits[index], v.getDigit(index)));
+		index++;
 	}
+	return values[0];
 }
 
 function criteriumOxygen(commonDigit: number, digit: number) {

@@ -26,7 +26,7 @@ export class Input extends AbstractInput<string> {
 		return new Input(fs.readFileSync(filename).toString());
 	}
 
-	static create(string: string): Input {
+	static import(string: string): Input {
 		return new Input(string);
 	}
 
@@ -38,7 +38,11 @@ export class Input extends AbstractInput<string> {
 export class SplitInput<T> extends AbstractInput<T[]> {
 	
 	static create(string: string, splitOn?: string) {
-		return new SplitInput(string.split("\n"));
+		return new SplitInput(string.split(splitOn ?? "\n"));
+	}
+
+	static import<T>(values: T[]) {
+		return new SplitInput(values);
 	}
 
 	parse<K>(mapper: (input: T, index?: number, array?: T[]) => K): SplitInput<K> {

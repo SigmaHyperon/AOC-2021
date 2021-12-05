@@ -2,8 +2,12 @@ export class Point2 {
 	x: number;
 	y: number;
 
-	constructor() {
-		this.x = 0;
-		this.y = 0;
+	constructor(x?: number, y?: number) {
+		this.x = x ?? 0;
+		this.y = y ?? 0;
+	}
+
+	toString() {
+		return `${this.x},${this.y}`;
 	}
 }

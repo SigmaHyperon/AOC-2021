@@ -29,3 +29,33 @@ export class Binary {
 		return this.digits()[index];
 	}
 }
+
+export class Integers {
+	/**
+	 * returns a range of integers starting from the lowest value of a or b and ending at the highest
+	 * @example a: 7, b: 3 -> [3, 4, 5, 6, 7]
+	 * @param a number
+	 * @param b number
+	 * @returns number[]
+	 */
+	static range(a: number, b: number) {
+		const size = Math.abs(a - b) + 1;
+		const start = Math.min(a, b);
+		return [...Array(size).keys()].map(v => v + start);
+	}
+
+	/**
+	 * returns a range of integers starting from a and ending at b
+	 * @example a: 7, b: 3 -> [7, 6, 5, 4, 3]
+	 * @param a number
+	 * @param b number
+	 * @returns number[]
+	 */
+	static directionalRange(a: number, b: number) {
+		if(a <= b) {
+			return this.range(a, b);
+		} else {
+			return this.range(a, b).reverse();
+		}
+	}
+}

@@ -4,4 +4,8 @@ declare global {
 		sum(): number;
 		product(): number;
 	}
+
+	interface Map<K, V> {
+		increment(value: K): void;
+	}
 }

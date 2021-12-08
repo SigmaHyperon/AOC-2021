@@ -1,7 +1,7 @@
 import { Input } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
-import { Lists } from "../../lib/lists";
+import { Lists } from "../../lib/collections";
 
 const values = Input.readFile().asLines(",").removeEmpty().asIntegers().get();
 

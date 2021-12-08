@@ -1,13 +1,20 @@
 import { Input } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
-import { Lists, Sets } from "../../lib/collections";
 
 type SegmentIdentifier = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
 
-function missingSegments(base: SegmentIdentifier[], remove: SegmentIdentifier[]): number {
-	return base.filter(v => !remove.includes(v)).length;
+function missingSegments(base: Set<SegmentIdentifier>, remove: Set<SegmentIdentifier>): number {
+	return [...base.values()].filter(v => !remove.has(v)).length;
 }
+
+const decoder = new Map<number, {reference: number, differences: number}[]>();
+decoder.set(0, [{reference: 1, differences: 0}, {reference: 4, differences: 1}]);
+decoder.set(2, [{reference: 4, differences: 2}]);
+decoder.set(3, [{reference: 1, differences: 0}]);
+decoder.set(5, [{reference: 4, differences: 1}]);
+decoder.set(6, [{reference: 1, differences: 1}]);
+decoder.set(9, [{reference: 4, differences: 0}]);
 
 class SegmentDisplay {
 	segmentsActive: Set<SegmentIdentifier>;
@@ -36,55 +43,21 @@ class SegmentDisplay {
 		if(typeof assumption === "number") {
 			return assumption;
 		}
+		outer:
 		for(let n of assumption) {
-			if(n == 6) {
-				const key1 = key.get(1);
-				if(key1.filter(v => !this.segmentsActive.has(v)).length > 0) {
-					return n;
-				}
-			} else if(n == 2) {
-				const key4 = key.get(4);
-				if(key4.filter(v => !this.segmentsActive.has(v)).length == 2) {
-					return n;
-				}
-			} else if(n == 9) {
-				const key4 = key.get(4);
-				if(key4.filter(v => !this.segmentsActive.has(v)).length == 0) {
-					return n;
-				}
-			} else if(n == 3) {
-				const key1 = key.get(1);
-				if(key1.filter(v => !this.segmentsActive.has(v)).length == 0) {
-					return n;
-				}
-			} else if(n == 0) {
-				const key1 = key.get(1);
-				const key4 = key.get(4);
-				if(key1.filter(v => !this.segmentsActive.has(v)).length == 0 && key4.filter(v => !this.segmentsActive.has(v)).length == 1) {
-					return n;
-				}
-			} else if(n == 5) {
-				const key4 = key.get(4);
-				if(key4.filter(v => !this.segmentsActive.has(v)).length == 1) {
-					return n;
-				}
-			} else if(n == 2) {
-				const key4 = key.get(4);
-				if(key4.filter(v => !this.segmentsActive.has(v)).length == 2) {
-					return n;
+			const decode = decoder.get(n);
+			for(let set of decode) {
+				if(missingSegments(key.get(set.reference), this.segmentsActive) != set.differences) {
+					continue outer;
 				}
 			}
+			return n;
 		}
 		return assumption;
 	}
-
-	equals(otherDisplay: SegmentDisplay): boolean {
-		return Sets.equals(this.segmentsActive, otherDisplay.segmentsActive);
-	}
 }
 
-type Key = Map<number, SegmentIdentifier[]>;
-
+type Key = Map<number, Set<SegmentIdentifier>>;
 type Line = {unique: SegmentDisplay[], output: SegmentDisplay[]};
 
 function parseLine(line: string): Line {
@@ -101,12 +74,12 @@ function part1(): number | string {
 }
 
 function createPartialKey(line: Line): Key {
-	const key = new Map<number, SegmentIdentifier[]>();
-	const displays = [...line.unique, ...line.output].sort((a,b) => a.segmentsActive.size - b.segmentsActive.size);
+	const key = new Map<number, Set<SegmentIdentifier>>();
+	const displays = [...line.unique, ...line.output];
 	for(let display of displays) {
 		const assumption = display.assumeNumber();
 		if(typeof assumption === "number") {
-			key.set(assumption, [...display.segmentsActive.values()]);
+			key.set(assumption, display.segmentsActive);
 		}
 	}
 	return key;

@@ -1,58 +1,31 @@
 import { Input } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
-import { Point2 } from "../../lib/geometry";
+import { Matrix, MatrixValue } from "../../lib/collections";
 
 const values = Input.readFile().asLines().removeEmpty().get();
 
-const field = values.map(v => v.trim().split("").filter(v => v.length === 1).map(v => parseInt(v)));
-
-class Position extends Point2 {
-	height: number;
-	constructor(x: number, y: number, height: number) {
-		super(x, y);
-		this.height = height;
-	}
-}
-
-function surroundingPositions(field: number[][], x: number, y: number): Position[] {
-	const positions: Position[] = [];
-	if(y - 1 >= 0) {
-		positions.push(new Position(x, y-1, field[y-1][x]));
-	} 
-	if(x - 1 >= 0) {
-		positions.push(new Position(x-1, y, field[y][x-1]));
-	}
-	if(y + 1 < field.length) {
-		positions.push(new Position(x, y+1, field[y+1][x]));
-	}
-	if(x + 1 < field[y].length) {
-		positions.push(new Position(x+1, y, field[y][x+1]));
-	}
-	return positions;
-}
+const matrix =  new Matrix(values.map(v => v.trim().split("").filter(v => v.length === 1).map(v => parseInt(v))));
 
 function part1(): number | string {
 	let sum = 0;
-	for(let y = 0; y < field.length; y++) {
-		for(let x = 0; x < field[y].length; x++) {
-			const surrounding = surroundingPositions(field, x, y);
-			if(surrounding.filter(v => v.height <= field[y][x]).length === 0) {
-				sum += field[y][x] + 1;
-			}
+	for(let position of matrix.values()) {
+		const surrounding = matrix.neighbours(position.x, position.y);
+		if(surrounding.filter(v => v.value <= position.value).length === 0) {
+			sum += position.value + 1;
 		}
 	}
 	return sum;
 }
 
-function basinSize(field: number[][], x: number, y: number): number {
-	let positionsToCheck: Position[] = [new Position(x, y, field[y][x])];
-	let positionsIncluded: Position[] = [];
+function basinSize(matrix: Matrix<number>, x: number, y: number): number {
+	let positionsToCheck: MatrixValue<number>[] = [new MatrixValue<number>(x, y, matrix.valueAt(x, y))];
+	let positionsIncluded: MatrixValue<number>[] = [];
 	while(positionsToCheck.length > 0) {
-		let expandTo: Position[] = [];
+		let expandTo: MatrixValue<number>[] = [];
 		for(let position of positionsToCheck) {
-			let surrounding = surroundingPositions(field, position.x, position.y).filter(v => v.height > position.height && v.height < 9);
-			surrounding = surrounding.filter(v => positionsToCheck.filter(k => k.x == v.x && k.y == v.y).length == 0 && positionsIncluded.filter(k => k.x == v.x && k.y == v.y).length == 0 && expandTo.filter(k => k.x == v.x && k.y == v.y).length == 0)
+			let surrounding = matrix.neighbours(position.x, position.y).filter(v => v.value > position.value && v.value < 9);
+			surrounding = surrounding.filter(v => ![...positionsToCheck, ...positionsIncluded, ...expandTo].some(k => k.x == v.x && k.y == v.y))
 			expandTo.push(...surrounding);
 		}
 		positionsIncluded.push(...positionsToCheck);
@@ -63,12 +36,10 @@ function basinSize(field: number[][], x: number, y: number): number {
 
 function part2(): number | string {
 	const basinSizes: number[] = [];
-	for(let y = 0; y < field.length; y++) {
-		for(let x = 0; x < field[y].length; x++) {
-			const surrounding = surroundingPositions(field, x, y);
-			if(surrounding.filter(v => v.height <= field[y][x]).length === 0) {
-				basinSizes.push(basinSize(field, x, y));
-			}
+	for(let position of matrix.values()) {
+		const surrounding = matrix.neighbours(position.x, position.y);
+		if(surrounding.filter(v => v.value <= position.value).length === 0) {
+			basinSizes.push(basinSize(matrix, position.x, position.y));
 		}
 	}
 	return basinSizes.sort((a,b) => b-a).slice(0,3).product();

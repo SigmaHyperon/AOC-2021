@@ -88,3 +88,19 @@ export class MatrixValue<T> extends Point2 {
 		this.value = value;
 	}
 }
+
+export class Stack<T> {
+	stack: T[] = [];
+
+	push(value: T) {
+		this.stack.push(value);
+	}
+
+	pop(): T {
+		return this.stack.pop();
+	}
+
+	peek(): T {
+		return this.stack[this.stack.length - 1];
+	}
+}

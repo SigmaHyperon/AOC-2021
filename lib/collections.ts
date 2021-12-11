@@ -50,7 +50,10 @@ export class Matrix<T> {
 				throw "Matrix not rectangular";
 			}
 		}
-		this.matrix = matrix;
+		this.matrix = [];
+		for(let h = 0; h < this.height; h++) {
+			this.matrix[h] = matrix[h].slice();
+		}
 	}
 
 	protected hasValueAt(x: number, y: number): boolean {
@@ -61,12 +64,18 @@ export class Matrix<T> {
 		return this.hasValueAt(x, y) ? this.matrix[y][x] : null; 
 	}
 
-	public neighbours(x: number, y: number): MatrixValue<T>[] {
+	public neighbours(x: number, y: number, includeDiagonal: boolean = false): MatrixValue<T>[] {
 		const neighbours: MatrixValue<T>[] = [];
 		neighbours.push(new MatrixValue(x, y-1, this.valueAt(x, y-1)));
 		neighbours.push(new MatrixValue(x-1, y, this.valueAt(x - 1, y)));
 		neighbours.push(new MatrixValue(x, y+1, this.valueAt(x, y + 1)));
 		neighbours.push(new MatrixValue(x+1, y, this.valueAt(x + 1, y)));
+		if(includeDiagonal) {
+			neighbours.push(new MatrixValue(x-1, y-1, this.valueAt(x-1, y-1)));
+			neighbours.push(new MatrixValue(x-1, y+1, this.valueAt(x-1, y+1)));
+			neighbours.push(new MatrixValue(x+1, y-1, this.valueAt(x+1, y-1)));
+			neighbours.push(new MatrixValue(x+1, y+1, this.valueAt(x+1, y+1)));
+		}
 		return neighbours.filter(v => v.value != null);
 	}
 
@@ -78,6 +87,13 @@ export class Matrix<T> {
 			}
 		}
 		return values;
+	}
+
+	public print(toString?: (value: T) => string) {
+		for(let r = 0; r < this.height; r++) {
+			const row = this.matrix[r];
+			console.log((toString ? row.map(v => toString(v)) : row).join(","));
+		}
 	}
 }
 

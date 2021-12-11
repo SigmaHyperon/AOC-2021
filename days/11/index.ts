@@ -1,4 +1,4 @@
-import { Input, SplitInput } from "../../lib/input";
+import { Input, ListInput } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 import { Matrix } from "../../lib/collections";
@@ -30,7 +30,7 @@ class Group {
 	}
 }
 
-const values = Input.readFile().asLines().removeEmpty().parse(v => v.split("").filter(k => k.length == 1).map(k => parseInt(k))).get();
+const values = Input.readFile().asMatrix("").asIntegers().get();
 
 function part1(): number | string {
 	const startingGroup = new Group(new Matrix<number>(values));

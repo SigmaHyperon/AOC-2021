@@ -3,9 +3,9 @@ import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 import { Matrix, MatrixValue } from "../../lib/collections";
 
-const values = Input.readFile().asLines().removeEmpty().get();
+const values = Input.readFile().asMatrix("").asIntegers().get();
 
-const matrix =  new Matrix(values.map(v => v.trim().split("").filter(v => v.length === 1).map(v => parseInt(v))));
+const matrix =  new Matrix(values);
 
 function part1(): number | string {
 	let sum = 0;

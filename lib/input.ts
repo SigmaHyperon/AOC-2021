@@ -30,34 +30,52 @@ export class Input extends AbstractInput<string> {
 		return new Input(string);
 	}
 
-	asLines(splitOn?: string): SplitInput<string> {
-		return SplitInput.create(this.content, splitOn);
+	asLines(splitOn?: string): ListInput<string> {
+		return ListInput.create(this.content, splitOn);
+	}
+
+	asMatrix(splitColumns: string, slitRows?: string) {
+		return ListInput.create(this.content).removeEmpty().asMatrix(splitColumns);
 	}
 }
 
-export class SplitInput<T> extends AbstractInput<T[]> {
+export class ListInput<T> extends AbstractInput<T[]> {
 	
 	static create(string: string, splitOn?: string) {
-		return new SplitInput(string.split(splitOn ?? "\n"));
+		return new ListInput(string.split(splitOn ?? "\n"));
 	}
 
 	static import<T>(values: T[]) {
-		return new SplitInput(values);
+		return new ListInput(values);
 	}
 
-	parse<K>(mapper: (input: T, index?: number, array?: T[]) => K): SplitInput<K> {
-		return new SplitInput(this.content.map(mapper));
+	parse<K>(mapper: (input: T, index?: number, array?: T[]) => K): ListInput<K> {
+		return new ListInput(this.content.map(mapper));
 	}
 
-	asIntegers(): SplitInput<number> {
-		return new SplitInput(this.content.map(v => parseInt(v as unknown as string)));
+	asIntegers(): ListInput<number> {
+		return new ListInput(this.content.map(v => parseInt(v as unknown as string)));
 	}
 
 	filter(filter: (input: T) => boolean) {
-		return new SplitInput(this.content.filter(filter));
+		return new ListInput(this.content.filter(filter));
 	}
 
-	removeEmpty(): SplitInput<T> {
+	removeEmpty(): ListInput<T> {
 		return this.filter(v => v != null && typeof v !== "undefined" && (typeof v !== "string" || v !== ""))
+	}
+
+	asMatrix(splitOn: string) {
+		return MatrixInput.create(this.content.map(v => v.toString()), splitOn);
+	}
+}
+
+export class MatrixInput<T> extends AbstractInput<T[][]> {
+	static create(lines: string[], splitOn: string) {
+		return new MatrixInput(lines.map(v => v.split(splitOn)));
+	} 
+
+	asIntegers(): MatrixInput<number> {
+		return new MatrixInput(this.content.map(v => v.map(k => parseInt(k as unknown as string))));
 	}
 }

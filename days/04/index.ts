@@ -1,4 +1,4 @@
-import { Input, SplitInput } from "../../lib/input";
+import { Input, ListInput } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 
@@ -32,8 +32,8 @@ class Board{
 	}
 }
 
-const numbers = SplitInput.create(numberLine, ",").asIntegers().get();
-const boards = SplitInput.import(boardLines).parse(v => new Board(v)).get();
+const numbers = ListInput.create(numberLine, ",").asIntegers().get();
+const boards = ListInput.import(boardLines).parse(v => new Board(v)).get();
 
 function part1(): number | string {
 	const marked = new Set<number>();

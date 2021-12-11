@@ -89,6 +89,14 @@ export class Matrix<T> {
 		return values;
 	}
 
+	public apply(x: number, y: number, manipulator: (current: T) => T) {
+		if(this.hasValueAt(x, y)) {
+			const current = this.valueAt(x,y);
+			const replaceWith = manipulator(current);
+			this.matrix[y][x] = replaceWith;
+		}
+	}
+
 	public print(toString?: (value: T) => string) {
 		for(let r = 0; r < this.height; r++) {
 			const row = this.matrix[r];

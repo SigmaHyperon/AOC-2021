@@ -16,7 +16,7 @@ for(let connection of values) {
 	caveMap.set(b, (caveMap.get(b) ?? new Set<CaveID>()).add(a));
 }
 
-function trace(path?: CaveID[]): CaveID[][] {
+function trace(path?: CaveID[]): number {
 	if(typeof path === "undefined") {
 		path = ["start"];
 	}
@@ -24,10 +24,10 @@ function trace(path?: CaveID[]): CaveID[][] {
 	const nextPaths = possibleMoves.map(v => [...path,v]);
 	const endPaths = nextPaths.filter(v => v.includes("end"));
 	const continuingPaths = nextPaths.filter(v => !v.includes("end")).flatMap(v => trace(v));
-	return [...endPaths, ...continuingPaths];
+	return endPaths.length + continuingPaths.sum();
 }
 
-function traceAdvanced(path?: CaveID[]): CaveID[][] {
+function traceAdvanced(path?: CaveID[]): number {
 	if(typeof path === "undefined") {
 		path = ["start"];
 	}
@@ -36,16 +36,16 @@ function traceAdvanced(path?: CaveID[]): CaveID[][] {
 	const nextPaths = possibleMoves.map(v => [...path,v]);
 	const endPaths = nextPaths.filter(v => v.includes("end"));
 	const continuingPaths = nextPaths.filter(v => !v.includes("end")).flatMap(v => traceAdvanced(v));
-	return [...endPaths, ...continuingPaths];
+	return endPaths.length + continuingPaths.sum();
 }
 
 
 function part1(): number | string {
-	return trace().length;
+	return trace();
 }
 
 function part2(): number | string {
-	return traceAdvanced().length;
+	return traceAdvanced();
 }
 
 Solver.create()

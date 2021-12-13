@@ -2,6 +2,7 @@ import { Input } from "../../lib/input";
 import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 import { Point2 } from "../../lib/geometry";
+import Constants from "../../lib/constants";
 
 const values = Input.readFile().asLines("\n\n").get();
 
@@ -50,7 +51,7 @@ function plot(points: Point2[]): string {
 	for(let y = 0; y <= height; y++) {
 		const linePoints = points.filter(v => v.y === y);
 		const line = Array(width).fill(" ");
-		linePoints.forEach(v => line[v.x] = "#");
+		linePoints.forEach(v => line[v.x] = Constants.CHAR_FULL_BLOCK);
 		plot.push(line.join(""));
 	}
 	return "\n" + plot.join("\n");

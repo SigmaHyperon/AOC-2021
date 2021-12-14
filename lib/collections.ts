@@ -28,6 +28,12 @@ export class Lists {
 		}
 		return list.filter(onlyUnique);		  
 	}
+
+	static window<T>(list: T[], index: number, width: number): T[] {
+		if(index + width > list.length) 
+			throw "window out of bounds";
+		return list.slice(index, index + width);
+	}
 }
 
 export class Sets {

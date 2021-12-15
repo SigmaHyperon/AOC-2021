@@ -147,6 +147,11 @@ export class PriorityQueue<T> {
 			if(index >= 0) {
 				this.queue.splice(index, 1);
 			}
+		} else {
+			const index = this.queue.findIndex(v => v.value === value);
+			if(index >= 0) {
+				this.queue.splice(index, 1);
+			}
 		}
 		for(let i = 0; i < this.queue.length; i++) {
 			if(priority < this.queue[i].priority) {

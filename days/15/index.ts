@@ -57,14 +57,14 @@ function findShortestPath(graph: Map<string, Node>, startNode: Node, endNode: No
 	let distances = new Map<string, number>();
 	distances.set(endNode.id, Infinity);
 
-	const queue = new PriorityQueue<{id: string, distance: number}>();
+	const queue = new PriorityQueue<string>();
 
 	for (let n of startNode.neighbours) {
 		distances.set(n.id, n.value);
-		queue.push({id: n.id, distance: n.value}, n.value, n.id);
+		queue.push(n.id, n.value);
 	}
 
-	let node = queue.pop()?.id;
+	let node = queue.pop();
 
 	while (node) {
 		let distance = distances.get(node);
@@ -77,12 +77,12 @@ function findShortestPath(graph: Map<string, Node>, startNode: Node, endNode: No
 				let newdistance = distance + child.value;
 				if (!distances.get(child.id) || distances.get(child.id) > newdistance) {
 					distances.set(child.id, newdistance);
-					queue.push({id: child.id, distance: newdistance}, newdistance, child.id);
+					queue.push(child.id, newdistance);
 				}
 			}
 		}
 		graph.get(node).visited = true;
-		node = queue.pop()?.id;
+		node = queue.pop();
 	}
 	return distances.get(endNode.id);
 };

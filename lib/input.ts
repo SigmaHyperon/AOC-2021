@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Matrix } from "./collections";
 import Constants from "./constants";
 
 abstract class AbstractInput<T> {
@@ -75,7 +76,31 @@ export class MatrixInput<T> extends AbstractInput<T[][]> {
 		return new MatrixInput(lines.map(v => v.split(splitOn)));
 	} 
 
+	static import<T>(values: T[][]): MatrixInput<T> {
+		return new MatrixInput(values);
+	}
+
 	asIntegers(): MatrixInput<number> {
 		return new MatrixInput(this.content.map(v => v.map(k => parseInt(k as unknown as string))));
+	}
+
+	parse<K>(mapper: (input: T, index?: number, array?: T[]) => K): MatrixInput<K> {
+		const n: K[][] = [];
+		for(let i = 0; i < this.content.length; i++) {
+			n.push(this.content[i].map(mapper));
+		}
+		return MatrixInput.import(n);
+	}
+
+	parseLine<K>(mapper: (input: T[], index?: number, array?: T[][]) => K[]): MatrixInput<K> {
+		return MatrixInput.import(this.content.map(mapper));
+	}
+
+	parseContent<K>(mapper: (input: T[][]) => K[][]): MatrixInput<K> {
+		return MatrixInput.import(mapper(this.content));
+	}
+
+	asMatrix(): Matrix<T> {
+		return new Matrix<T>(this.content);
 	}
 }

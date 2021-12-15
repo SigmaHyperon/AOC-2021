@@ -134,3 +134,30 @@ export class Stack<T> {
 		return this.stack[this.stack.length - 1];
 	}
 }
+
+export class PriorityQueue<T> {
+	queue: {id?: string, value: T, priority: number}[];
+	constructor() {
+		this.queue = [];
+	}
+
+	push(value: T, priority: number, id?: string){
+		if(id) {
+			const index = this.queue.findIndex(v => v.id === id);
+			if(index >= 0) {
+				this.queue.splice(index, 1);
+			}
+		}
+		for(let i = 0; i < this.queue.length; i++) {
+			if(priority < this.queue[i].priority) {
+				this.queue.splice(i, 0, {id, value, priority});
+				return;
+			}
+		}
+		this.queue.push({value, priority});
+	}
+
+	pop(): T | null {
+		return this.queue.shift()?.value;
+	}
+}

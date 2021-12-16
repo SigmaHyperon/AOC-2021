@@ -3,8 +3,6 @@ import Solver from "../../lib/solver";
 import "../../lib/prototypes";
 import { Binary } from "../../lib/numerics";
 
-const test = "A0016C880162017C3686B18A3D4780";
-
 const values = Input.readFile().asLines("").removeEmpty().parse(v => Binary.fromHex(v)).get();
 
 abstract class Packet {
@@ -66,7 +64,7 @@ function parse(input: string[]): Packet {
 	const version = new Binary(input.splice(0, 3).join(""));
 	const type = new Binary(input.splice(0, 3).join(""));
 	if(type.toInt() == 4) {
-		let bits: string = "";
+		let bits = "";
 		let segment = "";
 		do {
 			segment = input.splice(0, 5).join("");
@@ -76,32 +74,30 @@ function parse(input: string[]): Packet {
 		return new LiteralPacket(version.toInt(), type.toInt(), new Binary(bits).toInt());
 	} else {
 		const lengthType = input.splice(0, 1).join("");
+		const packets: Packet[] = [];
 		if(lengthType == "0") {
 			const contentLength = new Binary(input.splice(0, 15).join("")).toInt();
 			const body = input.splice(0, contentLength);
-			const packets: Packet[] = [];
 			while(body.length > 0) {
 				packets.push(parse(body));
 			}
-			return new OperatorPacket(version.toInt(), type.toInt(), packets);
 		} else {
 			const packetCount = new Binary(input.splice(0, 11).join("")).toInt();
-			const packets: Packet[] = [];
 			for(let i = 0; i < packetCount; i++) {
 				packets.push(parse(input));
 			}
-			return new OperatorPacket(version.toInt(), type.toInt(), packets);
 		}
+		return new OperatorPacket(version.toInt(), type.toInt(), packets);
 	}
 }
 
+const packet = parse(values.flatMap(v => v.digits()).map(v => v.toString()));
+
 function part1(): number | string {
-	const packet = parse(values.flatMap(v => v.digits()).map(v => v.toString()));
 	return packet.getVersions().sum();
 }
 
 function part2(): number | string {
-	const packet = parse(values.flatMap(v => v.digits()).map(v => v.toString()));
 	return packet.getContent();
 }
 

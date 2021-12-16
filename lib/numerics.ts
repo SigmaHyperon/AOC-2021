@@ -8,6 +8,10 @@ export class Binary {
 		return new Binary(digits.join(""));
 	}
 
+	static fromHex(hex: string): Binary {
+		return new Binary(parseInt(hex, 16).toString(2).padStart(4, "0"));
+	}
+
 	toInt(): number {
 		const digits = this.digits().reverse();
 		let sum = 0;

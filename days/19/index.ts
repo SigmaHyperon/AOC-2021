@@ -56,54 +56,64 @@ class ScanArea {
 function parse(area: string): ScanArea {
 	const [idLine, ...positionLines] = area.split("\n");
 	const id = parseInt(idLine.match(/\d+/)[0]);
-	const positions = positionLines.map(v => v.split(",").map(k => parseInt(k))).map(v => new Vector3(v[0], v[1], v[2]));
-	return new ScanArea(id, positions);
+	const positions = positionLines.filter(v => v.length > 0).map(v => v.split(",").map(k => parseInt(k)));
+	const vectors = positions.map(v => new Vector3(v[0], v[1], v[2]));
+	return new ScanArea(id, vectors);
 }
 
 const values = Input.readFile().asLines("\n\n").removeEmpty().parse(parse).get();
 
-function match(fixed: ScanArea, piece: ScanArea): ScanArea | null {
-	for(let area of piece.getRotations()) {
-		for(let deciderFixed of fixed.getAbsoluteBeacons()) {
+function match(fixed: ScanArea, pieces: ScanArea[]): ScanArea | null {
+	const fixedBeacons = fixed.getAbsoluteBeacons();
+	for(let area of pieces) {
+		for(let deciderFixed of fixedBeacons) {
 			for(let decider of area.beacons) {
 				area.origin = deciderFixed.subtract(decider);
 				let equalsCount = 0;
-				for(let a of fixed.getAbsoluteBeacons()) {
-					for(let b of area.getAbsoluteBeacons()) {
+				for(let b of area.getAbsoluteBeacons()) {
+					for(let a of fixedBeacons) {
 						if(a.equals(b)) {
 							equalsCount++;
+							if(equalsCount == 12) {
+								return area;
+							}
 						}
 					}
-				}
-				if(equalsCount >= 12) {
-					return area;
 				}
 			}
 		}
 	}
 }
 
-function part1(): number | string {
+function assemblePieces(): ScanArea[] {
 	let [seed, ...rem] = values;
-	const pieces: ScanArea[] = [];
+	let rotated = rem.map(v => v.getRotations());
 	seed.origin = new Vector3(0,0,0);
-	pieces.push(seed);
-	while(rem.length > 0) {
-		console.log(rem.length);
+	const pieces: ScanArea[] = [seed];
+	while(rotated.length > 0) {
 		p:
 		for(let piece of pieces.reverse()) {
-			for (let i = 0; i < rem.length; i++) {
-				const res = match(piece, rem[i]);
+			for (let i = 0; i < rotated.length; i++) {
+				const res = match(piece, rotated[i]);
 				if(typeof res == "object") {
-					rem.splice(i, 1);
+					rotated.splice(i, 1);
 					pieces.push(res);
 					break p;
 				}
 			}
 		}
 	}
+	return pieces;
+}
+
+let pieces: ScanArea[] = [];
+
+function part1(): number | string {
+	if(pieces.length == 0) {
+		pieces = assemblePieces();
+	}
 	const beacons = pieces.flatMap(v => v.getAbsoluteBeacons());
-	const uniqueBeacons: Vector3[] = []
+	const uniqueBeacons: Vector3[] = [];
 	for(let b of beacons) {
 		if(uniqueBeacons.findIndex(v => b.equals(v)) == -1) {
 			uniqueBeacons.push(b);
@@ -113,25 +123,9 @@ function part1(): number | string {
 }
 
 function part2(): number | string {
-	let [seed, ...rem] = values;
-	const pieces: ScanArea[] = [];
-	seed.origin = new Vector3(0,0,0);
-	pieces.push(seed);
-	while(rem.length > 0) {
-		console.log(rem.length);
-		p:
-		for(let piece of pieces.reverse()) {
-			for (let i = 0; i < rem.length; i++) {
-				const res = match(piece, rem[i]);
-				if(typeof res == "object") {
-					rem.splice(i, 1);
-					pieces.push(res);
-					break p;
-				}
-			}
-		}
+	if(pieces.length == 0) {
+		pieces = assemblePieces();
 	}
-	console.log(JSON.stringify(pieces.map(v => {return{id:v.id, origin:v.origin}})));
 	let max = 0;
 	for(let i = 0; i < pieces.length - 1; i++) {
 		for(let j = i + 1; j < pieces.length; j++) {

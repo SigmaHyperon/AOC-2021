@@ -82,6 +82,10 @@ class PlayerGroup {
 
 
 type Board = Map<number, PlayerGroup>[];
+
+function countPlayers(board: Board): number {
+	return board.map(v => [...v.values()].map(k => k.count)).flat().sum()
+}
 class Game {
 	static createBoard(): Board {
 		return Array(10).fill(null).map(v => new Map<number, PlayerGroup>());
@@ -96,14 +100,12 @@ class Game {
 			boards.push(b);
 		}
 		while(boards.every(v => !v.flat().every(k => k.size == 0))) {
-			for(let i = 0; i < boards.length; i++) {
+			for(let i of boards.keys()) {
 				const board = boards[i];
 				const otherBoard = boards[(i + 1) % boards.length];
-				const previousCardinality = otherBoard.map(v => [...v.values()].map(k => k.count).sum()).sum();
-				const branchCardinality = previousCardinality / board.map(v => [...v.values()].map(k => k.count).sum()).sum();
+				const branchCardinality = countPlayers(otherBoard) / countPlayers(board);
 				const newBoard = this.createBoard();
-				for(let pos of board.entries()) {
-					const [position, players] = pos;
+				for(let [position, players] of board.entries()) {
 					for(let group of players.values()) {
 						for(let roll of DiracDie.roll()) {
 							const nextPosition = (position + roll.roll) % 10;
@@ -113,7 +115,7 @@ class Game {
 								wins[i] += nextCardinality;
 							} else {
 								const nextPos = newBoard[nextPosition];
-								nextPos.set(nextScore, nextPos.get(nextScore) ? new PlayerGroup(nextScore, nextPos.get(nextScore).count + nextCardinality) : new PlayerGroup(nextScore, nextCardinality));
+								nextPos.set(nextScore, new PlayerGroup(nextScore, (nextPos.get(nextScore)?.count ?? 0) + nextCardinality));
 							}
 						}
 					}

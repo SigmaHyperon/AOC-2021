@@ -57,6 +57,73 @@ class PracticeGame {
 	}
 }
 
+class DiracDie {
+	static roll() {
+		return [
+			{times: 1, roll: 3},
+			{times: 3, roll: 4},
+			{times: 6, roll: 5},
+			{times: 7, roll: 6},
+			{times: 6, roll: 7},
+			{times: 3, roll: 8},
+			{times: 1, roll: 9}
+		]
+	}
+}
+
+class PlayerGroup {
+	score: number;
+	count: number;
+	constructor(score: number, count: number) {
+		this.score = score;
+		this.count = count;
+	}
+}
+
+
+type Board = Map<number, PlayerGroup>[];
+class Game {
+	static createBoard(): Board {
+		return Array(10).fill(null).map(v => new Map<number, PlayerGroup>());
+	}
+
+	static play(positions: number[]): number {
+		let wins: number[] = Array(positions.length).fill(0);
+		let boards: Board[] = [];
+		for(let i = 0; i < positions.length; i++) {
+			const b = this.createBoard();
+			b[positions[i] - 1].set(0, new PlayerGroup(0, 1));
+			boards.push(b);
+		}
+		while(boards.every(v => !v.flat().every(k => k.size == 0))) {
+			for(let i = 0; i < boards.length; i++) {
+				const board = boards[i];
+				const otherBoard = boards[(i + 1) % boards.length];
+				const previousCardinality = otherBoard.map(v => [...v.values()].map(k => k.count).sum()).sum();
+				const branchCardinality = previousCardinality / board.map(v => [...v.values()].map(k => k.count).sum()).sum();
+				const newBoard = this.createBoard();
+				for(let pos of board.entries()) {
+					const [position, players] = pos;
+					for(let group of players.values()) {
+						for(let roll of DiracDie.roll()) {
+							const nextPosition = (position + roll.roll) % 10;
+							const nextCardinality = branchCardinality * roll.times * group.count;
+							const nextScore = group.score + nextPosition + 1;
+							if(nextScore >= 21) {
+								wins[i] += nextCardinality;
+							} else {
+								const nextPos = newBoard[nextPosition];
+								nextPos.set(nextScore, nextPos.get(nextScore) ? new PlayerGroup(nextScore, nextPos.get(nextScore).count + nextCardinality) : new PlayerGroup(nextScore, nextCardinality));
+							}
+						}
+					}
+				}
+				boards[i] = newBoard;
+			}
+		}
+		return Math.max(...wins);
+	}
+}
 
 const values = Input.readFile().asLines().removeEmpty().parse(v => parseInt(v.slice(-1))).get();
 
@@ -65,7 +132,12 @@ function part1(): number | string {
 	return game.play();
 }
 
+function part2(): number | string {
+	return Game.play(values);
+}
+
 
 Solver.create()
 .setPart1(part1)
+.setPart2(part2)
 .solve();

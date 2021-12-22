@@ -12,6 +12,19 @@ export class Point2 {
 	}
 }
 
+export class Point3 extends Point2 {
+	z: number;
+
+	constructor(x?: number, y?: number, z?:number) {
+		super(x, y);
+		this.z = z ?? 0;
+	}
+
+	toString() {
+		return `${super.toString()},${this.z}`;
+	}
+}
+
 export class Vector3 {
 	x: number;
 	y: number;
